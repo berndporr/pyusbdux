@@ -1,6 +1,5 @@
 /*
- * Example of using commands - asynchronous input
- * Part of Comedilib
+ * pyusbdux
  *
  * Copyright (c) 1999,2000,2001 David A. Schleef <ds@schleef.org>
  *               2018 Bernd Porr <mail@berndporr.me.uk>
@@ -10,18 +9,11 @@
  * source code.
  */
 
-/*
- * The program is used to test the usbdux sigma board
- */
-
 #include <stdio.h>
 #include <comedilib.h>
-#include <fcntl.h>
 #include <unistd.h>
-#include <sys/time.h>
 #include <errno.h>
 #include <stdlib.h>
-#include <string.h>
 
 #include "pyusbdux.h"
 
@@ -29,13 +21,10 @@
 #define N_CHANS 16
 #define BUFSZ N_CHANS*sizeof(long int)
 
-const char filename[] = "/dev/comedi0";
-
 comedi_t *dev;
 int range = 0;
 int subdevice = 0;
-int aref;
-int verbose;
+int aref  = AREF_GROUND;
 int n_chan;
 double freq;
 int bytes_per_sample;
@@ -58,15 +47,16 @@ const char *cmdtest_messages[]={
 	"invalid chanlist",
 };
 
-int start(int n_channels, double fs)
-{
-	comedi_cmd cmd;
-	int ret;
-
-	range = 0;
-	aref = AREF_GROUND;
+int start(int n_channels, double fs, int comediDeviceNumber) {
 	n_chan = n_channels;
 	freq = fs;
+
+	for(int i=0;i<N_CHANS;i++) {
+		samples[i] = 0;
+	}
+
+	char filename[256];
+	sprintf(filename,"/dev/comedi%d",comediDeviceNumber);
 
 	/* open the device */
 	dev = comedi_open(filename);
@@ -94,7 +84,8 @@ int start(int n_channels, double fs)
 		bytes_per_sample = sizeof(sampl_t);
 	}
 
-        ret = comedi_get_cmd_generic_timed(dev, subdevice, &cmd, n_chan, 1e9 / freq);
+	comedi_cmd cmd;
+        int ret = comedi_get_cmd_generic_timed(dev, subdevice, &cmd, n_chan, 1e9 / freq);
         if(ret<0){
                 printf("comedi_get_cmd_generic_timed failed\n");
                 return ret;
@@ -146,6 +137,16 @@ int start(int n_channels, double fs)
 }
 
 
+int start(int nChan) {
+	return start(nChan,250,0);
+}
+
+
+int start(int nChan, double fs) {
+	return start(nChan,fs,0);
+}
+
+
 sample_p getSampleFromBuffer() {
 	while (!comedi_get_buffer_contents(dev,subdevice)) {};
 	int ret = read(comedi_fileno(dev),buffer,bytes_per_sample * n_chan);
@@ -163,8 +164,8 @@ sample_p getSampleFromBuffer() {
 				raw = ((sampl_t *)buffer)[i];
 			}
 			samples[i] = comedi_to_phys(raw,
-						   range_info[i],
-						   maxdata[i]);
+						    range_info[i],
+						    maxdata[i]);
 		}
 	}
 	return samples;
@@ -172,7 +173,7 @@ sample_p getSampleFromBuffer() {
 
 
 int hasSampleAvilabale() {
-	return comedi_get_buffer_contents(dev,subdevice) > 0;
+	return comedi_get_buffer_contents(dev,subdevice);
 }
 
 

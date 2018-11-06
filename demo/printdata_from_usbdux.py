@@ -1,7 +1,8 @@
 #!/usr/bin/python3
+
 import pyusbdux as dux
 
-result = dux.start(1,250)
+result = dux.start(2)
 if result > 0:
     exit()
 
