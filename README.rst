@@ -2,7 +2,7 @@
 Python API for the USB-DUX
 ==========================
 
-USB-DUX is a collection of data acquisition boxes designed for Linux
+USB-DUX are data acquisition boxes designed for Linux
 
 http://www.linux-usb-daq.co.uk
 
@@ -10,7 +10,7 @@ http://www.linux-usb-daq.co.uk
 Installation instructions
 =========================
 
-For Linux install::
+The module is compiled from source using the comedi development libraries::
 
       apt install libcomedi0
       apt install libcomedi-dev
@@ -33,19 +33,20 @@ Here are the basic steps how to use the API::
       dux.start(1,250)
 
       # Now we just read data at our convenience in a loop or timer or thread
-      # if data is available you can read it from the ringBuffer
 
-      while (not dux.hasSampleAvilabale()):
-      	    # do something else or nothing
+      # Let's check if samples are available
+      if (dux.hasSampleAvilabale() == 0):
+      	    # nope! Do something else or nothing
 
-      # getting a sample (array of all USB-DUX channels)
+      # Let's get a sample (array of all USB-DUX channels)
       sample = dux.getSampleFromBuffer()
 
-      # do something with the sample
+      # do something with the sample, for example print it
       print(sample)
 
       # rinse and repeat!
 
+      # shutdown
       dux.stop()
       dux.close()
 
