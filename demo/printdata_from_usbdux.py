@@ -2,12 +2,16 @@
 
 import pyusbdux as dux
 
-result = dux.start(2)
-if result > 0:
+result = dux.open()
+if not result == 0:
+    exit()
+
+result = dux.start(8)
+if not result == 0:
     exit()
 
 while True:
     while (not dux.hasSampleAvilabale()):
-        a = 1
+        pass
     sample = dux.getSampleFromBuffer()
     print(sample)

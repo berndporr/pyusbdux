@@ -12,9 +12,8 @@ Installation instructions
 
 For Linux install::
 
-      sudo apt install libcomedi0
-      sudo apt install libcomedi-dev
-      pip3 install numpy
+      apt install libcomedi0
+      apt install libcomedi-dev
       pip3 install pyusbdux
 
 
@@ -27,7 +26,10 @@ Here are the basic steps how to use the API::
       # load the module
       import pyusbdux as dux
 
-      # Start data acquisition in the background
+      # open comedi
+      dux.open()
+
+      # Start data acquisition in the background: one channel, fs=250Hz
       dux.start(1,250)
 
       # Now we just read data at our convenience in a loop or timer or thread
@@ -45,28 +47,34 @@ Here are the basic steps how to use the API::
       # rinse and repeat!
 
       dux.stop()
+      dux.close()
 
 
 API documentation
 ==================
 
-There are only four commands::
+The commands focus on the asynchronous acquisition::
 
-      # Starts acquisition of n_channels at the sampling rate of fs
-      # on device with comediDeviceNumber.
+      # opens the comedi device with comediDeviceNumber
+      # returns 0 on success
+      open(comediDeviceNumber)
+      open() # opens 1st comedi device
+
+      # Starts acquisition of n_channels at the sampling rate of fs.
       # Returns 0 for success and an error code if not successful.
-      start(n_channels, fs, comediDeviceNumber)
       start(n_channels, fs)       # on the 1st comedi device
       start(n_channels)           # on the 1st comedi device at fs=250
 
-      # Checks if samples are available. Returns the number of
-      samples. Otherwise zero.
+      # Checks if samples are available (=1) or zero if not.
       hasSampleAvilabale();
 
       # Returns one sample from all channels.
       # returns always 16 values irrespective of how many channels
-      # are measured.
+      # are measured. Blocking call if no samples are available.
       getSampleFromBuffer()
 
       # stops the background acquisition
       stop()
+
+      # closes the comedi device
+      close()

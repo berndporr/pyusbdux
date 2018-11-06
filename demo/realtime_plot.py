@@ -27,7 +27,8 @@ def data_gen():
         yield data
 
 
-c.start(1,250)
+c.open()
+c.start(8,250)
 
 # now let's plot the data
 fig, ax = plt.subplots()
@@ -46,5 +47,6 @@ ani = animation.FuncAnimation(fig, update, data_gen, interval=100)
 plt.show()
 
 c.stop()
+c.close()
 
 print("finished")

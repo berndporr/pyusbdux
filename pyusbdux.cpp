@@ -14,6 +14,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "pyusbdux.h"
 
@@ -21,7 +22,8 @@
 #define N_CHANS 16
 #define BUFSZ N_CHANS*sizeof(long int)
 
-comedi_t *dev;
+
+comedi_t *dev = NULL;
 int range = 0;
 int subdevice = 0;
 int aref  = AREF_GROUND;
@@ -47,14 +49,8 @@ const char *cmdtest_messages[]={
 	"invalid chanlist",
 };
 
-int start(int n_channels, double fs, int comediDeviceNumber) {
-	n_chan = n_channels;
-	freq = fs;
 
-	for(int i=0;i<N_CHANS;i++) {
-		samples[i] = 0;
-	}
-
+int open(int comediDeviceNumber) {
 	char filename[256];
 	sprintf(filename,"/dev/comedi%d",comediDeviceNumber);
 
@@ -63,6 +59,24 @@ int start(int n_channels, double fs, int comediDeviceNumber) {
 	if(!dev){
 		comedi_perror(filename);
 		return errno;
+	}
+	return 0;
+}
+
+
+int open() {
+	return open(0);
+}
+
+
+int start(int n_channels, double fs, int comediDeviceNumber) {
+	n_chan = n_channels;
+	freq = fs;
+
+	if (dev == NULL) return -ENODEV;
+
+	for(int i=0;i<N_CHANS;i++) {
+		samples[i] = 0;
 	}
 
 	subdevice = comedi_find_subdevice_by_type(dev,COMEDI_SUBD_AI,0);
@@ -85,6 +99,7 @@ int start(int n_channels, double fs, int comediDeviceNumber) {
 	}
 
 	comedi_cmd cmd;
+	memset(&cmd,0,sizeof(comedi_cmd));
         int ret = comedi_get_cmd_generic_timed(dev, subdevice, &cmd, n_chan, 1e9 / freq);
         if(ret<0){
                 printf("comedi_get_cmd_generic_timed failed\n");
@@ -148,13 +163,13 @@ int start(int nChan, double fs) {
 
 
 sample_p getSampleFromBuffer() {
-	while (!comedi_get_buffer_contents(dev,subdevice)) {};
+	while (!comedi_get_buffer_contents(dev,subdevice)) {
+		usleep(1000);
+	};
 	int ret = read(comedi_fileno(dev),buffer,bytes_per_sample * n_chan);
 	if(ret < 0){
-		perror("read");
-	}else if(ret == 0){
-		fprintf(stderr,"No data has arrived!");
-	}else{
+		perror("reading sample");
+	}else if (ret > 0){
 		int subdev_flags = comedi_get_subdevice_flags(dev,subdevice);
 		for(int i = 0; i < n_chan; i++) {
 			int raw;
@@ -173,10 +188,18 @@ sample_p getSampleFromBuffer() {
 
 
 int hasSampleAvilabale() {
-	return comedi_get_buffer_contents(dev,subdevice);
+	if (dev == NULL) return 0;
+	return comedi_get_buffer_contents(dev,subdevice) > 0;
 }
 
 
 void stop() {
+	if (dev == NULL) return;
 	comedi_cancel(dev,subdevice);
+}
+
+
+void close() {
+	comedi_close(dev);
+	dev = NULL;
 }
