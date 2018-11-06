@@ -10,7 +10,7 @@ http://www.linux-usb-daq.co.uk
 Installation instructions
 =========================
 
-For Ubuntu Linux install  attyscomm-dev::
+For Linux install::
 
       sudo apt install libcomedi0
       sudo apt install libcomedi-dev
@@ -36,7 +36,7 @@ Here are the basic steps how to use the API::
       while (not dux.hasSampleAvilabale()):
       	    # do something else or nothing
 
-      # getting a sample (array of all Attys channels)
+      # getting a sample (array of all USB-DUX channels)
       sample = dux.getSampleFromBuffer()
 
       # do something with the sample
