@@ -1,0 +1,5 @@
+include *.py
+include README.rst
+include numpy.i
+include pyusbdux.h
+include pyusbdux.cpp

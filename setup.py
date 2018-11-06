@@ -21,18 +21,21 @@ pyusbdux_module = Extension('_pyusbdux',
 
 						   
 setup (name = 'pyusbdux',
-       version = '1.0.0',
+       version = '1.0.1',
        author      = "Bernd Porr",
        author_email = "mail@berndporr.me.uk",
-       url = "https://github.com/glasgowneuro/AttysComm",
-       description = 'API for the USB-DUX DAQ box for Linux (www.linux-usb-daq.co.uk)',
+       url = "https://github.com/berndporr/pyusbdux",
+       description = 'API for the USB-DUX DAQ boxes for Linux (www.linux-usb-daq.co.uk)',
        long_description=read('README.rst'),
        ext_modules = [pyusbdux_module],
        py_modules = ["pyusbdux"],
        license='GPL v3',
+       install_requires=[
+          'numpy',
+       ],
        classifiers=[
           'Intended Audience :: Developers',
           'Operating System :: POSIX',
-          'Programming Language :: Python'
+          'Programming Language :: Python :: 3',
           ]
       )
