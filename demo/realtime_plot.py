@@ -39,7 +39,7 @@ line, = ax.plot(plotbuffer)
 # axis
 ax.set_ylim(-1.5, 1.5)
 
-        
+
 # start the animation
 ani = animation.FuncAnimation(fig, update, data_gen, interval=100)
 

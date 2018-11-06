@@ -11,7 +11,5 @@ if not result == 0:
     exit()
 
 while True:
-    while (not dux.hasSampleAvilabale()):
-        pass
     sample = dux.getSampleFromBuffer()
     print(sample)
