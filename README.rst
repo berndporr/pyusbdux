@@ -10,7 +10,7 @@ http://www.linux-usb-daq.co.uk
 Installation instructions
 =========================
 
-The module is compiled from source using the comedi development libraries::
+The module uses the comedi development libraries::
 
       apt install libcomedi0
       apt install libcomedi-dev
@@ -56,26 +56,43 @@ API documentation
 
 The commands focus on the asynchronous acquisition::
 
-      # opens the comedi device with comediDeviceNumber
-      # returns 0 on success
+open
+----
+opens the comedi device with comediDeviceNumber and returns 0 on success::
+
       open(comediDeviceNumber)
       open() # opens 1st comedi device
 
-      # Starts acquisition of n_channels at the sampling rate of fs.
-      # Returns 0 for success and an error code if not successful.
+start
+-----
+Starts acquisition of n_channels at the sampling rate of fs and
+returns 0 for success and an error code if not successful::
+
       start(n_channels, fs)       # on the 1st comedi device
       start(n_channels)           # on the 1st comedi device at fs=250
 
-      # Checks if samples are available (=1) or zero if not.
+samples available?
+------------------
+Checks if samples are available (=1) or zero if not::
+
       hasSampleAvilabale();
 
-      # Returns one sample from all channels.
-      # returns always 16 values irrespective of how many channels
-      # are measured. Blocking call if no samples are available.
+retrieving a sample
+-------------------
+Returns one sample from all channels and always 16 values 
+irrespective of how many channels are being measured. 
+It's a blocking call if no samples are available::
+
       getSampleFromBuffer()
 
-      # stops the background acquisition
+stop
+----
+Stops the background acquisition::
+
       stop()
 
-      # closes the comedi device
+close
+-----
+Closes the comedi device::
+
       close()
