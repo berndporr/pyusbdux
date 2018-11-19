@@ -54,7 +54,7 @@ Here are the basic steps how to use the API::
 API documentation
 ==================
 
-The commands focus on the asynchronous acquisition::
+The commands focus on the asynchronous acquisition but have also async analogue/digital out::
 
       # opens the comedi device with comediDeviceNumber
       # returns 0 on success
@@ -76,6 +76,15 @@ The commands focus on the asynchronous acquisition::
 
       # stops the background acquisition
       stop()
+
+      # writes to a digital pin
+      digital_out(channel, value)
+
+      # reads from a digital pin
+      digital_in(channel)
+
+      # writes to an analogue output pin (raw ADC values)
+      analoge_out(channel, value)
 
       # closes the comedi device
       close()

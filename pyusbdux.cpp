@@ -199,6 +199,42 @@ void stop() {
 }
 
 
+
+int digital_out(int channel, int value) {
+	int subdevice = 2;
+        int ret = comedi_dio_config(dev,subdevice,channel,COMEDI_OUTPUT);
+        if(ret < 0){
+                return ret;
+        }
+        ret = comedi_dio_write(dev,subdevice,channel,value);
+        return ret;
+}
+
+
+
+int digital_in(int channel) {
+	int subdevice = 2;
+        int ret = comedi_dio_config(dev,subdevice,channel,COMEDI_INPUT);
+        if(ret < 0){
+                return ret;
+        }
+	unsigned int value;
+        ret = comedi_dio_read(dev,subdevice,channel,&value);
+	if (ret<0) return ret;
+        return value;
+}
+
+
+
+int analogue_out(int channel, int value) {
+	int subdevice = comedi_find_subdevice_by_type(dev,COMEDI_SUBD_AO,0);
+	int ret = comedi_data_write(dev,subdevice,channel,0,0, value);
+        return ret;
+}
+
+
+
+
 void close() {
 	comedi_close(dev);
 	dev = NULL;

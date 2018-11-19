@@ -16,6 +16,10 @@ sample_p getSampleFromBuffer();
 
 void stop();
 
+int digital_out(int channel, int value);
+int digital_in(int channel);
+int analogue_out(int channel, int value);
+
 void close();
 
 #endif
