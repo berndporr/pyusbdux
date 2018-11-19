@@ -86,5 +86,13 @@ The commands focus on the asynchronous acquisition but have also async analogue/
       # writes to an analogue output pin (raw ADC values)
       analoge_out(channel, value)
 
+      # gets the max raw value of the analogue output
+      get_analogue_out_max_raw_value()
+
       # closes the comedi device
       close()
+
+
+Generally return values follow the "COMEDI" convention: zero and
+positive values indicate success and/or real values. Negative
+values are errors and its codes.

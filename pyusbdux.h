@@ -19,6 +19,7 @@ void stop();
 int digital_out(int channel, int value);
 int digital_in(int channel);
 int analogue_out(int channel, int value);
+int get_analogue_out_max_raw_value();
 
 void close();
 

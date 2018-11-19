@@ -233,6 +233,11 @@ int analogue_out(int channel, int value) {
 }
 
 
+int get_analogue_out_max_raw_value() {
+	int subdevice = comedi_find_subdevice_by_type(dev,COMEDI_SUBD_AO,0);
+	return comedi_get_maxdata(dev, subdevice, 0);
+}
+
 
 
 void close() {
