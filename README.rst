@@ -10,10 +10,13 @@ http://www.linux-usb-daq.co.uk
 Installation instructions
 =========================
 
-The module is compiled from source using the comedi development libraries::
+Install first the comedi development libraries::
 
       apt install libcomedi0
       apt install libcomedi-dev
+
+and then pyusbdux for python3::
+  
       pip3 install pyusbdux
 
 
@@ -54,17 +57,17 @@ Here are the basic steps how to use the API::
 API documentation
 ==================
 
-The commands focus on the asynchronous acquisition but have also async analogue/digital out::
+The commands focus on the asynchronous acquisition but offers also synchronous digital I/O and analogue out::
 
       # opens the comedi device with comediDeviceNumber
       # returns 0 on success
       open(comediDeviceNumber)
-      open() # opens 1st comedi device
+      open()                      # opens 1st comedi device
 
       # Starts acquisition of n_channels at the sampling rate of fs.
       # Returns 0 for success and an error code if not successful.
-      start(n_channels, fs)       # on the 1st comedi device
-      start(n_channels)           # on the 1st comedi device at fs=250
+      start(n_channels, fs)
+      start(n_channels)           # at fs=250
 
       # Checks if samples are available (=1) or zero if not.
       hasSampleAvilabale();
@@ -77,7 +80,7 @@ The commands focus on the asynchronous acquisition but have also async analogue/
       # stops the background acquisition
       stop()
 
-      # writes to a digital pin
+      # writes to a digital pin the value 0 or 1
       digital_out(channel, value)
 
       # reads from a digital pin
@@ -94,5 +97,5 @@ The commands focus on the asynchronous acquisition but have also async analogue/
 
 
 Generally return values follow the "COMEDI" convention: zero and
-positive values indicate success and/or real values. Negative
-values are errors and its codes.
+positive values indicate success and/or measurement results. Negative
+values are error codes.
