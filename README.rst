@@ -95,7 +95,4 @@ The commands focus on the asynchronous acquisition but offers also synchronous d
       # closes the comedi device
       close()
 
-
-Generally return values follow the "COMEDI" convention: zero and
-positive values indicate success and/or measurement results. Negative
-values are error codes.
+Error throw an exception as usual in Python.

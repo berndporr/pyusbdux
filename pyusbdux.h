@@ -3,12 +3,12 @@
 
 typedef float* sample_p;
 
-int open(int comediDeviceNumber);
-int open();
+void open(int comediDeviceNumber);
+void open();
 
-int start(int n_channels, double fs);
-int start(int nChan);
-int start(int nChan, double fs);
+void start(int n_channels, double fs);
+void start(int nChan);
+void start(int nChan, double fs);
 
 int hasSampleAvilabale();
 
@@ -16,10 +16,12 @@ sample_p getSampleFromBuffer();
 
 void stop();
 
-int digital_out(int channel, int value);
+void digital_out(int channel, int value);
 int digital_in(int channel);
-int analogue_out(int channel, int value);
+void analogue_out(int channel, int value);
 int get_analogue_out_max_raw_value();
+
+const char* get_board_name();
 
 void close();
 

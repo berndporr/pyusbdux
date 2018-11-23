@@ -2,13 +2,9 @@
 
 import pyusbdux as dux
 
-result = dux.open()
-if not result == 0:
-    exit()
+dux.open()
 
-result = dux.start(8)
-if not result == 0:
-    exit()
+dux.start(8)
 
 while True:
     sample = dux.getSampleFromBuffer()

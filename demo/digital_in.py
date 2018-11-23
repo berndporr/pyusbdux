@@ -2,9 +2,7 @@
 
 import pyusbdux as dux
 
-result = dux.open()
-if not result == 0:
-    exit()
+dux.open()
 
 # as fast as possible just for testing
 while True:
