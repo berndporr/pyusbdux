@@ -98,4 +98,4 @@ The commands focus on the asynchronous acquisition but offers also synchronous d
       # returns the name of the board connected
       get_board_name()
 
-Error throw an exception as usual in Python.
+An error throws an exception as usual in Python.
