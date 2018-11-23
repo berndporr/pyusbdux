@@ -28,6 +28,7 @@ def data_gen():
 
 
 c.open()
+print("ADC board:",c.get_board_name())
 c.start(8,250)
 
 # now let's plot the data

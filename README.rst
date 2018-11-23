@@ -95,4 +95,7 @@ The commands focus on the asynchronous acquisition but offers also synchronous d
       # closes the comedi device
       close()
 
+      # returns the name of the board connected
+      get_board_name()
+
 Error throw an exception as usual in Python.
