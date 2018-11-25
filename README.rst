@@ -10,12 +10,12 @@ http://www.linux-usb-daq.co.uk
 Installation instructions
 =========================
 
-Install first the comedi development libraries::
+Install first the comedi development libraries (if not already on your system)::
 
       apt install libcomedi0
       apt install libcomedi-dev
 
-and then pyusbdux for python3::
+and then install pyusbdux (only available for python3)::
   
       pip3 install pyusbdux
 
@@ -32,10 +32,11 @@ Here are the basic steps how to use the API::
       # open comedi
       dux.open()
 
-      # Start data acquisition in the background: one channel, fs=250Hz
+      # Start asynchronous data acquisition in the background: one channel, fs=250Hz
       dux.start(1,250)
 
-      # Now we just read data at our convenience in a loop or timer or thread
+      # Now we read data at our convenience in a loop or timer or thread
+      # The following lines need to be repeated
 
       # Let's check if samples are available
       if (dux.hasSampleAvilabale() == 0):
@@ -48,6 +49,7 @@ Here are the basic steps how to use the API::
       print(sample)
 
       # rinse and repeat!
+      # end of loop
 
       # shutdown
       dux.stop()
@@ -57,7 +59,8 @@ Here are the basic steps how to use the API::
 API documentation
 ==================
 
-The commands focus on the asynchronous acquisition but offers also synchronous digital I/O and analogue out::
+These are the commands which allow you to access the analogue inputs asynchronously
+and the analogue outputs, digital input and outputs synchronously.
 
       # opens the comedi device with comediDeviceNumber
       # returns 0 on success
@@ -98,4 +101,10 @@ The commands focus on the asynchronous acquisition but offers also synchronous d
       # returns the name of the board connected
       get_board_name()
 
-An error throws an exception as usual in Python.
+Any error in comedi throws an exception in python.
+
+Example / demo programs
+=======================
+
+In the folder https://github.com/berndporr/pyusbdux/tree/master/demo are example
+scripts which show you how to sample data from the analogue and digital ports.
