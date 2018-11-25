@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 
 """
 setup.py file for pyusbdux.py
@@ -21,7 +21,7 @@ pyusbdux_module = Extension('_pyusbdux',
 
 						   
 setup (name = 'pyusbdux',
-       version = '1.3.3',
+       version = '1.3.4',
        author      = "Bernd Porr",
        author_email = "mail@berndporr.me.uk",
        url = "https://github.com/berndporr/pyusbdux",

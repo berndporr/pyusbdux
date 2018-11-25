@@ -168,7 +168,9 @@ sample_p getSampleFromBuffer() {
 
 int hasSampleAvilabale() {
 	if (dev == NULL) throw "Device not open";
-	return comedi_get_buffer_contents(dev,subdevice) > 0;
+	int ret = comedi_get_buffer_contents(dev,subdevice);
+	if (ret < 0) throw "Device error. Possible disconnect.";
+	return ret > 0;
 }
 
 
