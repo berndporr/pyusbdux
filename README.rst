@@ -60,7 +60,7 @@ API documentation
 ==================
 
 These are the commands which allow you to access the analogue inputs asynchronously
-and the analogue outputs, digital input and outputs synchronously.
+and the analogue outputs, digital input and outputs synchronously::
 
       # opens the comedi device with comediDeviceNumber
       # returns 0 on success
