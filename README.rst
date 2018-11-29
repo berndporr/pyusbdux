@@ -39,7 +39,7 @@ Here are the basic steps how to use the API::
       # The following lines need to be repeated
 
       # Let's check if samples are available
-      if (dux.hasSampleAvilabale() == 0):
+      if (dux.hasSampleAvailable() == 0):
       	    # nope! Do something else or nothing
 
       # Let's get a sample (array of all USB-DUX channels)
@@ -73,7 +73,7 @@ and the analogue outputs, digital input and outputs synchronously::
       start(n_channels)           # at fs=250
 
       # Checks if samples are available (=1) or zero if not.
-      hasSampleAvilabale();
+      hasSampleAvailable();
 
       # Returns one sample from all channels.
       # returns always 16 values irrespective of how many channels
