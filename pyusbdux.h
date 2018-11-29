@@ -6,11 +6,10 @@ typedef float* sample_p;
 void open(int comediDeviceNumber);
 void open();
 
-void start(int n_channels, double fs);
 void start(int nChan);
 void start(int nChan, double fs);
 
-int hasSampleAvilabale();
+int hasSampleAvailable();
 
 sample_p getSampleFromBuffer();
 

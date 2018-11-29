@@ -21,7 +21,7 @@ def data_gen():
     #endless loop which gets data
     while True:
         data = np.zeros(0)
-        while c.hasSampleAvilabale():
+        while c.hasSampleAvailable():
             sample = c.getSampleFromBuffer()
             data = np.append(data,sample[0])
         yield data

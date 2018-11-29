@@ -58,7 +58,7 @@ void open() {
 }
 
 
-void start(int n_channels, double fs, int comediDeviceNumber) {
+void start(int n_channels, double fs) {
 	n_chan = n_channels;
 	freq = fs;
 
@@ -131,12 +131,7 @@ void start(int n_channels, double fs, int comediDeviceNumber) {
 
 
 void start(int nChan) {
-	start(nChan,250,0);
-}
-
-
-void start(int nChan, double fs) {
-	start(nChan,fs,0);
+	start(nChan,250);
 }
 
 
@@ -166,7 +161,7 @@ sample_p getSampleFromBuffer() {
 }
 
 
-int hasSampleAvilabale() {
+int hasSampleAvailable() {
 	if (dev == NULL) throw "Device not open";
 	int ret = comedi_get_buffer_contents(dev,subdevice);
 	if (ret < 0) throw "Device error. Possible disconnect.";
