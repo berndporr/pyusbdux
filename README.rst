@@ -10,12 +10,7 @@ http://www.linux-usb-daq.co.uk
 Installation instructions
 =========================
 
-Install first the comedi development libraries (if not already on your system)::
-
-      apt install libcomedi0
-      apt install libcomedi-dev
-
-and then install pyusbdux (only available for python3)::
+Install pyusbdux by typing::
   
       pip3 install pyusbdux
 
