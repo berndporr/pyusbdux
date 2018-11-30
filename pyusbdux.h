@@ -10,7 +10,6 @@ void start(int nChan);
 void start(int nChan, double fs);
 
 int hasSampleAvailable();
-int hasSampleAvilabale() { return hasSampleAvailable(); };
 
 sample_p getSampleFromBuffer();
 
