@@ -21,6 +21,9 @@ app = QtGui.QApplication(sys.argv)
 # signals to all threads in endless loops that we'd like to run these
 running = True
 
+channel_of_window1 = 0
+channel_of_window2 = 7
+
 class QtPanningPlot:
 
     def __init__(self,title):
@@ -53,8 +56,8 @@ def getDataThread(qtPanningPlot1,qtPanningPlot2):
         # loop as fast as we can to empty the kernel buffer
         while c.hasSampleAvailable():
             sample = c.getSampleFromBuffer()
-            qtPanningPlot1.addData(sample[0])
-            qtPanningPlot2.addData(sample[7])
+            qtPanningPlot1.addData(sample[channel_of_window1])
+            qtPanningPlot2.addData(sample[channel_of_window2])
         # let Python do other stuff and sleep a bit
         sleep(0.1)
 
@@ -65,8 +68,8 @@ c.open()
 print("ADC board:",c.get_board_name())
 
 # Let's create two instances of plot windows
-qtPanningPlot1 = QtPanningPlot("USB-DUX 1st channel")
-qtPanningPlot2 = QtPanningPlot("USB-DUX 2nd channel")
+qtPanningPlot1 = QtPanningPlot("USB-DUX channel "+str(channel_of_window1))
+qtPanningPlot2 = QtPanningPlot("USB-DUX channel "+str(channel_of_window2))
 
 # create a thread which gets the data from the USB-DUX
 t = threading.Thread(target=getDataThread,args=(qtPanningPlot1,qtPanningPlot2,))
