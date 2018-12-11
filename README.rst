@@ -58,12 +58,10 @@ These are the commands which allow you to access the analogue inputs asynchronou
 and the analogue outputs, digital input and outputs synchronously::
 
       # opens the comedi device with comediDeviceNumber
-      # returns 0 on success
       open(comediDeviceNumber)
       open()                      # opens 1st comedi device
 
       # Starts acquisition of n_channels at the sampling rate of fs.
-      # Returns 0 for success and an error code if not successful.
       start(n_channels, fs)
       start(n_channels)           # at fs=250
 

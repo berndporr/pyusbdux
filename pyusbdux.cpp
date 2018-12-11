@@ -47,14 +47,24 @@ void open(int comediDeviceNumber) {
 	/* open the device */
 	dev = comedi_open(filename);
 	if(!dev){
-		comedi_perror(filename);
 		throw "Could not open comedi device";
+	}
+	if (strstr(comedi_get_board_name(dev),"usbdux") == NULL) {
+		throw "Not a USBDUX board";
 	}
 }
 
 
+// autodetect
 void open() {
-	open(0);
+	for(int i = 0;i<16;i++) {
+		try {
+			open(i);
+			return;
+		} catch (const char*) {
+		}
+	}
+	throw "No USBDUX board found.\n";
 }
 
 
