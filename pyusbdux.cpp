@@ -39,6 +39,8 @@ unsigned int chanlist[N_CHANS];
 comedi_range* range_info[N_CHANS];
 lsampl_t maxdata[N_CHANS];
 
+static const char errorDevNotOpen[] = "Comedi device not open. Use open() first.";
+static const char errorDisconnect[] = "Device error. Possible disconnect.";
 
 void open(int comediDeviceNumber) {
 	char filename[256];
@@ -47,10 +49,10 @@ void open(int comediDeviceNumber) {
 	/* open the device */
 	dev = comedi_open(filename);
 	if(!dev){
-		throw "Could not open comedi device";
+		throw "Could not open comedi device.";
 	}
 	if (strstr(comedi_get_board_name(dev),"usbdux") == NULL) {
-		throw "Not a USBDUX board";
+		throw "Not a USBDUX board.";
 	}
 }
 
@@ -64,15 +66,15 @@ void open() {
 		} catch (const char*) {
 		}
 	}
-	throw "No USBDUX board found.\n";
+	throw "No USBDUX board found.";
 }
 
 
 void start(int n_channels, double fs) {
+	if (dev == NULL) throw errorDevNotOpen;
+
 	n_chan = n_channels;
 	freq = fs;
-
-	if (dev == NULL) throw "Comedi device not open. Use open() first.";
 
 	for(int i=0;i<N_CHANS;i++) {
 		samples[i] = 0;
@@ -111,30 +113,16 @@ void start(int n_channels, double fs) {
 	cmd.stop_arg = 0;
 	cmd.scan_end_arg = n_chan;
 
-	/* comedi_command_test() tests a command to see if the
-	 * trigger sources and arguments are valid for the subdevice.
-	 * If a trigger source is invalid, it will be logically ANDed
-	 * with valid values (trigger sources are actually bitmasks),
-	 * which may or may not result in a valid trigger source.
-	 * If an argument is invalid, it will be adjusted to the
-	 * nearest valid value.  In this way, for many commands, you
-	 * can test it multiple times until it passes.  Typically,
-	 * if you can't get a valid command in two tests, the original
-	 * command wasn't specified very well. */
+	// twice!
 	ret = comedi_command_test(dev, &cmd);
-	if (errno == EIO) {
-		throw "Ummm... this subdevice doesn't support commands.";
-	}
 	ret = comedi_command_test(dev, &cmd);
 	if(ret!=0){
-		comedi_perror("comedi_command_test");
-		throw "Error preparing async command.";
+		throw "Error preparing async analogue in. Check sampling rate / number of channels.";
 	}
 
 	/* start the command */
 	ret = comedi_command(dev, &cmd);
 	if(ret < 0){
-		comedi_perror("comedi_command");
 		throw "Async data acquisition could not be started.";
 	}
 }
@@ -146,13 +134,16 @@ void start(int nChan) {
 
 
 sample_p getSampleFromBuffer() {
-	if (dev == NULL) throw "Device not open";
+	if (dev == NULL) throw errorDevNotOpen;
 	while (!comedi_get_buffer_contents(dev,subdevice)) {
-		usleep(1000);
+		usleep(100);
 	};
 	int ret = read(comedi_fileno(dev),buffer,bytes_per_sample * n_chan);
+	if (ret == 0) {
+		throw "BUG: No data returned by read() but there is data in the kernel buffer!";
+	}
 	if(ret < 0){
-		throw "Read from kernel ringbuffer has been unsuccessful.";
+		throw errorDisconnect;
 	} else if (ret > 0) {
 		int subdev_flags = comedi_get_subdevice_flags(dev,subdevice);
 		for(int i = 0; i < n_chan; i++) {
@@ -172,76 +163,73 @@ sample_p getSampleFromBuffer() {
 
 
 int hasSampleAvailable() {
-	if (dev == NULL) throw "Device not open";
+	if (dev == NULL) throw errorDevNotOpen;
 	int ret = comedi_get_buffer_contents(dev,subdevice);
-	if (ret < 0) throw "Device error. Possible disconnect.";
+	if (ret < 0) throw errorDisconnect;
 	return ret > 0;
 }
 
 
 void stop() {
-	if (dev == NULL) throw "Device not open";
+	if (dev == NULL) throw errorDevNotOpen;
 	comedi_cancel(dev,subdevice);
 }
 
 
 
 void digital_out(int channel, int value) {
-	const char errmsg[] = "Digital out operation failed";
+	if (dev == NULL) throw errorDevNotOpen;
 	int subdevice = 2;
-	if (dev == NULL) throw "Device not open";
         int ret = comedi_dio_config(dev,subdevice,channel,COMEDI_OUTPUT);
         if(ret < 0){
-		throw errmsg;
+		throw errorDisconnect;
         }
         ret = comedi_dio_write(dev,subdevice,channel,value);
 	if (ret < 0) {
-		throw errmsg;
+		throw errorDisconnect;
 	}
 }
 
 
 
 int digital_in(int channel) {
-	const char errmsg[] = "Digital in operation failed";
+	if (dev == NULL) throw errorDevNotOpen;
 	int subdevice = 2;
-	if (dev == NULL) throw "Device not open";
         int ret = comedi_dio_config(dev,subdevice,channel,COMEDI_INPUT);
-        if (ret < 0) throw errmsg;
+        if (ret < 0) throw errorDisconnect;
 	unsigned int value;
         ret = comedi_dio_read(dev,subdevice,channel,&value);
-	if (ret < 0) throw errmsg;
+	if (ret < 0) throw errorDisconnect;
         return (int)value;
 }
 
 
 
 void analogue_out(int channel, int value) {
-	const char errmsg[] = "Analogue out operation failed";
-	if (dev == NULL) throw "Device not open";
+	if (dev == NULL) throw errorDevNotOpen;
 	int subdevice = comedi_find_subdevice_by_type(dev,COMEDI_SUBD_AO,0);
 	int ret = comedi_data_write(dev,subdevice,channel,0,0, value);
-	if (ret<0) throw errmsg;
+	if (ret<0) throw errorDisconnect;
 }
 
 
 int get_analogue_out_max_raw_value() {
-	if (dev == NULL) throw "Device not open";
+	if (dev == NULL) throw errorDevNotOpen;
 	int subdevice = comedi_find_subdevice_by_type(dev,COMEDI_SUBD_AO,0);
 	int ret = comedi_get_maxdata(dev, subdevice, 0);
-	if (ret < 0) throw "Error when retreiving maxdata";
+	if (ret < 0) throw errorDisconnect;
 	return ret;
 }
 
 
 const char* get_board_name() {
-	if (dev == NULL) throw "Device not open";
+	if (dev == NULL) throw errorDevNotOpen;
 	return comedi_get_board_name(dev);
 }
 
 
 void close() {
-	if (dev == NULL) throw "Device not open";
+	if (dev == NULL) throw errorDevNotOpen;
 	comedi_close(dev);
 	dev = NULL;
 }

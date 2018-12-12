@@ -14,14 +14,14 @@ def read(fname):
 
 pyusbdux_module = Extension('_pyusbdux',
 			     sources=['pyusbdux.i','pyusbdux.cpp'],
-			     extra_compile_args=['-std=c++11'],
+			     extra_compile_args=['-std=c++11','-O3'],
 			     libraries=['comedi'],
                              swig_opts=['-c++','-py3'],
 )
 
 						   
 setup (name = 'pyusbdux',
-       version = '1.5.1',
+       version = '1.5.2',
        author      = "Bernd Porr",
        author_email = "mail@berndporr.me.uk",
        url = "https://github.com/berndporr/pyusbdux",
