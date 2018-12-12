@@ -24,7 +24,7 @@ Here are the basic steps how to use the API::
       # load the module
       import pyusbdux as dux
 
-      # open comedi
+      # opens the 1st USBDUX device
       dux.open()
 
       # Start asynchronous data acquisition in the background: one channel, fs=250Hz
@@ -59,7 +59,7 @@ and the analogue outputs, digital input and outputs synchronously::
 
       # opens the comedi device with comediDeviceNumber
       open(comediDeviceNumber)
-      open()                      # opens 1st comedi device
+      open()                      # opens 1st USB-DUX device
 
       # Starts acquisition of n_channels at the sampling rate of fs.
       start(n_channels, fs)
