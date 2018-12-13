@@ -12,7 +12,7 @@ Installation instructions
 
 Install pyusbdux by typing::
   
-      pip3 install pyusbdux
+      pip3 install pyusbdux [--user] [--upgrade]
 
 
 
@@ -24,7 +24,7 @@ Here are the basic steps how to use the API::
       # load the module
       import pyusbdux as dux
 
-      # opens the 1st USBDUX device
+      # opens the 1st USBDUX device (autodetect)
       dux.open()
 
       # Start asynchronous data acquisition in the background: one channel, fs=250Hz
@@ -59,7 +59,7 @@ and the analogue outputs, digital input and outputs synchronously::
 
       # opens the comedi device with comediDeviceNumber
       open(comediDeviceNumber)
-      open()                      # opens 1st USB-DUX device
+      open()                      # opens 1st USB-DUX device (autodetect)
 
       # Starts acquisition of n_channels at the sampling rate of fs.
       start(n_channels, fs)
@@ -95,6 +95,7 @@ and the analogue outputs, digital input and outputs synchronously::
       get_board_name()
 
 Any error in comedi throws an exception in python.
+
 
 Example / demo programs
 =======================
