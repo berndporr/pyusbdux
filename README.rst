@@ -101,3 +101,31 @@ Example / demo programs
 
 In the folder https://github.com/berndporr/pyusbdux/tree/master/examples are example
 scripts which show you how to sample data from the analogue and digital ports.
+
+
+Troubleshooting
+===============
+
+Spyder
+------
+
+Start your program from the terminal and never within Spyder. Here is
+an example::
+
+    ~/pyusbdux$ cd examples
+    ~/pyusbdux/examples$ python3 ./realtime_plot.py
+
+The problem with Spyder is that it won't let your Python program terminate properly
+so that the USB-DUX board is not properly shut down. If you then re-run your program
+it won't be able to talk to your USB-DUX.
+
+Bottomline: use Spyder for editing, run your program from the terminal.
+
+
+After an update still the old version is being used
+---------------------------------------------------
+
+If you use the `--user` option to install / update packages Python might keep older versions.
+
+Solution: Do a `pip uninstall pyusbdux` multiple times until no version is left 
+on your computer. Then install it again as described above.
