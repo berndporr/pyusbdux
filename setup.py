@@ -30,9 +30,6 @@ setup (name = 'pyusbdux',
        ext_modules = [pyusbdux_module],
        py_modules = ["pyusbdux"],
        license='GPL v3',
-       install_requires=[
-          'numpy',
-       ],
        classifiers=[
           'Intended Audience :: Developers',
           'Operating System :: POSIX',
