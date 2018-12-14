@@ -125,7 +125,7 @@ the USB-DUX board keeps running even if it seems that execution has finished.
 If you then re-run your program
 it won't be able to talk to your USB-DUX.
 
-Bottomline: Use Spyder only for editing, instead run your program from the terminal. Nver start
+Bottomline: Use Spyder only for editing, instead run your program from the terminal. Never start
 your program from within Spyder.
 
 
