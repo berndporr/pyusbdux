@@ -6,8 +6,8 @@ USB-DUX are data acquisition boxes designed for Linux
 
 http://www.linux-usb-daq.co.uk
 
-  * USB-DUX-D: 8 analogue inputs (isolated, 12 bit, 1 kHz), 4 analogue out (isolated, 12 bit) and 8 digital I/O
-  * USB-DUX-sigma: 16 analogue inputs (isolated, 24 bit, 1 kHz), 4 analogue out (isolated, 8 bit) and 8 digital I/O
+* USB-DUX-D: 8 analogue inputs (isolated, 12 bit, 1 kHz), 4 analogue out (isolated, 12 bit) and 8 digital I/O
+* USB-DUX-sigma: 16 analogue inputs (isolated, 24 bit, 1 kHz), 4 analogue out (isolated, 8 bit) and 8 digital I/O
 
 
 Installation instructions
