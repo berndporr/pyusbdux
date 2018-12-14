@@ -120,12 +120,12 @@ an example::
     ~/pyusbdux/examples$ python3 ./realtime_plot.py
 
 The problem with Spyder is that it won't let your Python program terminate properly so
-that you an examine variables etc. However, this means that
+that you can examine variables etc. However, this means that
 the USB-DUX board keeps running even if it seems that execution has finished.
 If you then re-run your program
 it won't be able to talk to your USB-DUX.
 
-Bottomline: Use Spyder for editing, run your program from the terminal. Nver start
+Bottomline: Use Spyder only for editing, instead run your program from the terminal. Nver start
 your program from within Spyder.
 
 
