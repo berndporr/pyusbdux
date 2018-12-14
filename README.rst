@@ -13,7 +13,11 @@ http://www.linux-usb-daq.co.uk
 Installation instructions
 =========================
 
-Install pyusbdux by typing::
+Make sure that you have all `comedi` libraries,
+`swig` and `python3` installed (both runtime and development).
+Use your favourite package manager to install the packages.
+
+Then install `pyusbdux` by typing::
   
       pip3 install pyusbdux [--user] [--upgrade]
 
