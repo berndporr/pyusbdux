@@ -15,8 +15,10 @@ def update(data):
     line.set_ydata(plotbuffer)
     return line,
 
-# this checks in an endless loop if there is data in the ringbuffer
-# of there is data then emit it to the update funnction above
+# retrieves the data from the ringbuffer as quickly
+# as possible and then dispatches the data as a numpy
+# array. This is called from the animation function
+# within an endless loop.
 def data_gen():
     #endless loop which gets data
     while True:

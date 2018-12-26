@@ -51,7 +51,7 @@ class QtPanningPlot:
 
 
 def getDataThread(qtPanningPlot1,qtPanningPlot2):
-    # endless loop with sleeps not for timing but for multitasking
+    # endless loop which sleeps not for timing but for multitasking
     while running:
         # loop as fast as we can to empty the kernel buffer
         while c.hasSampleAvailable():
