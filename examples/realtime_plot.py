@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import pyusbdux as c
 
+# add any initialsiation code here
+
 # receives the data from the generator below
 def update(data):
     global plotbuffer
@@ -26,6 +28,8 @@ def data_gen():
         while c.hasSampleAvailable():
             sample = c.getSampleFromBuffer()
             data = np.append(data,sample[0])
+            # for filtering add here:
+            # data = filter.dofilter(data)
         yield data
 
 

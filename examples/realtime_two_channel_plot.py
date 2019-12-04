@@ -22,7 +22,7 @@ app = QtGui.QApplication(sys.argv)
 running = True
 
 channel_of_window1 = 0
-channel_of_window2 = 7
+channel_of_window2 = 1
 
 class QtPanningPlot:
 
@@ -34,6 +34,7 @@ class QtPanningPlot:
         self.plt.setXRange(0,500)
         self.curve = self.plt.plot()
         self.data = []
+        # any filter initialisation goes here
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.update)
         self.timer.start(100)
@@ -56,8 +57,13 @@ def getDataThread(qtPanningPlot1,qtPanningPlot2):
         # loop as fast as we can to empty the kernel buffer
         while c.hasSampleAvailable():
             sample = c.getSampleFromBuffer()
-            qtPanningPlot1.addData(sample[channel_of_window1])
-            qtPanningPlot2.addData(sample[channel_of_window2])
+            v1 = sample[channel_of_window1]
+            v2 = sample[channel_of_window2]
+            # for filtering of data just add a filter function:
+            # v1 = self.filter1.dofilter(v1)
+            # v2 = self.filter2.dofilter(v2)
+            qtPanningPlot1.addData(v1)
+            qtPanningPlot2.addData(v2)
         # let Python do other stuff and sleep a bit
         sleep(0.1)
 
