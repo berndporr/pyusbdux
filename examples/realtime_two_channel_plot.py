@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-Plots channels zero and 7 of the USB-DUX in two different windows. Requires pyqtgraph.
+Plots channels zero and one of the USB-DUX in two different windows. Requires pyqtgraph.
 
 """
 
@@ -53,6 +53,8 @@ class QtPanningPlot:
 def getDataThread(qtPanningPlot1,qtPanningPlot2):
 
     # any filter initialisation goes here
+    # filter1 = MyAmazingFilterClass(...)
+    # filter2 = MyAmazingFilterClass(...)
     
     # endless loop which sleeps not for timing but for multitasking
     while running:
@@ -62,8 +64,8 @@ def getDataThread(qtPanningPlot1,qtPanningPlot2):
             v1 = sample[channel_of_window1]
             v2 = sample[channel_of_window2]
             # for filtering of data just add a filter function:
-            # v1 = self.filter1.dofilter(v1)
-            # v2 = self.filter2.dofilter(v2)
+            # v1 = filter1.dofilter(v1)
+            # v2 = filter2.dofilter(v2)
             qtPanningPlot1.addData(v1)
             qtPanningPlot2.addData(v2)
         # let Python do other stuff and sleep a bit
