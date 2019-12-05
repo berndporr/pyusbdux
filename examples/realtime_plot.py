@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import pyusbdux as c
 
-# add any initialsiation code here
+# add any initialsiation code here or filter initialisation
 
 # receives the data from the generator below
 def update(data):
@@ -23,6 +23,7 @@ def update(data):
 # within an endless loop.
 def data_gen():
     #endless loop which gets data
+    # filter = MyAmazingFilter(...)
     while True:
         data = np.zeros(0)
         while c.hasSampleAvailable():
