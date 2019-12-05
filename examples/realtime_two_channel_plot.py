@@ -34,7 +34,6 @@ class QtPanningPlot:
         self.plt.setXRange(0,500)
         self.curve = self.plt.plot()
         self.data = []
-        # any filter initialisation goes here
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.update)
         self.timer.start(100)
@@ -52,6 +51,9 @@ class QtPanningPlot:
 
 
 def getDataThread(qtPanningPlot1,qtPanningPlot2):
+
+    # any filter initialisation goes here
+    
     # endless loop which sleeps not for timing but for multitasking
     while running:
         # loop as fast as we can to empty the kernel buffer
