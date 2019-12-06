@@ -11,6 +11,8 @@ void start(int nChan, double fs);
 
 int hasSampleAvailable();
 
+float getSamplingRate();
+
 sample_p getSampleFromBuffer();
 
 void stop();

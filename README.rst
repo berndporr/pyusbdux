@@ -80,6 +80,9 @@ and the analogue outputs, digital input and outputs synchronously::
       # are measured. Blocking call if no samples are available.
       getSampleFromBuffer()
 
+      # gets the actual sampling rate of the running acquisition
+      getSamplingRate()
+
       # stops the background acquisition
       stop()
 

@@ -87,6 +87,11 @@ t = threading.Thread(target=getDataThread,args=(qtPanningPlot1,qtPanningPlot2,))
 # start data acquisition
 c.start(8,250)
 
+# gets the actual samplingrate from the board which
+# might be different to the requested because the
+# board is allowed to change it to a rate it can do.
+print("Actual samplingrate =",c.getSamplingRate(),"Hz")
+
 # start the thread getting the data
 t.start()
 

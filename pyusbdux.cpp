@@ -2,7 +2,7 @@
  * pyusbdux
  *
  * Copyright (c) 1999,2000,2001 David A. Schleef <ds@schleef.org>
- *               2018 Bernd Porr <mail@berndporr.me.uk>
+ *               2019 Bernd Porr <mail@berndporr.me.uk>
  *
  * This file may be freely modified, distributed, and combined with
  * other software, as long as proper attribution is given in the
@@ -38,6 +38,7 @@ float samples[N_CHANS];
 unsigned int chanlist[N_CHANS];
 comedi_range* range_info[N_CHANS];
 lsampl_t maxdata[N_CHANS];
+comedi_cmd cmd;
 
 static const char errorDevNotOpen[] = "Comedi device not open. Use open() first.";
 static const char errorDisconnect[] = "Device error. Possible disconnect.";
@@ -54,6 +55,7 @@ void open(int comediDeviceNumber) {
 	if (strstr(comedi_get_board_name(dev),"usbdux") == NULL) {
 		throw "Not a USBDUX board.";
 	}
+	memset(&cmd,0,sizeof(comedi_cmd));
 }
 
 
@@ -99,7 +101,6 @@ void start(int n_channels, double fs) {
 		bytes_per_sample = sizeof(sampl_t);
 	}
 
-	comedi_cmd cmd;
 	memset(&cmd,0,sizeof(comedi_cmd));
         int ret = comedi_get_cmd_generic_timed(dev, subdevice, &cmd, n_chan, 1e9 / freq);
         if(ret<0){
@@ -169,10 +170,27 @@ int hasSampleAvailable() {
 	return ret > 0;
 }
 
+float getSamplingRate() {
+	float sampling_rate = 0;
+        // the timing is done channel by channel
+        // this means that the actual sampling rate is divided by
+        // number of channels
+        if ((cmd.convert_src ==  TRIG_TIMER)&&(cmd.convert_arg)) {
+                sampling_rate=((1E9 / cmd.convert_arg)/n_chan);
+        }
+        
+        // the timing is done scan by scan (all channels at once)
+        // the sampling rate is equivalent of the scan_begin_arg
+        if ((cmd.scan_begin_src ==  TRIG_TIMER)&&(cmd.scan_begin_arg)) {
+                sampling_rate=1E9 / cmd.scan_begin_arg;
+        }
+	return sampling_rate;
+}
 
 void stop() {
 	if (dev == NULL) throw errorDevNotOpen;
 	comedi_cancel(dev,subdevice);
+	memset(&cmd,0,sizeof(comedi_cmd));
 }
 
 
@@ -232,4 +250,5 @@ void close() {
 	if (dev == NULL) throw errorDevNotOpen;
 	comedi_close(dev);
 	dev = NULL;
+	memset(&cmd,0,sizeof(comedi_cmd));
 }
