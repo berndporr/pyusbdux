@@ -90,7 +90,8 @@ c.start(8,250)
 # gets the actual samplingrate from the board which
 # might be different to the requested because the
 # board is allowed to change it to a rate it can do.
-print("Actual samplingrate =",c.getSamplingRate(),"Hz")
+# Requires version 1.6.0 or higher of pyusbdux.
+# print("Actual samplingrate =",c.getSamplingRate(),"Hz")
 
 # start the thread getting the data
 t.start()
