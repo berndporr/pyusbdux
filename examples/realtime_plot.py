@@ -36,8 +36,8 @@ def data_gen():
 
 c.open()
 print("ADC board:",c.get_board_name())
-c.start(8,250)
-# print("Actual samplingrate =",c.getSamplingRate(),"Hz")
+c.start(1,8000)
+print("Actual samplingrate =",c.getSamplingRate(),"Hz")
 
 # now let's plot the data
 fig, ax = plt.subplots()
