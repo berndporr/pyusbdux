@@ -2,7 +2,7 @@
  * pyusbdux
  *
  * Copyright (c) 1999,2000,2001 David A. Schleef <ds@schleef.org>
- *               2019 Bernd Porr <mail@berndporr.me.uk>
+ *               2019-2020 Bernd Porr <mail@berndporr.me.uk>
  *
  * This file may be freely modified, distributed, and combined with
  * other software, as long as proper attribution is given in the
@@ -136,7 +136,7 @@ void start(int nChan) {
 
 sample_p getSampleFromBuffer() {
 	if (dev == NULL) throw errorDevNotOpen;
-	while (!comedi_get_buffer_contents(dev,subdevice)) {
+	while (comedi_get_buffer_contents(dev,subdevice) < (bytes_per_sample * n_chan) ) {
 		usleep(100);
 	};
 	int ret = read(comedi_fileno(dev),buffer,bytes_per_sample * n_chan);
