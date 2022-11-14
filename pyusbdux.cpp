@@ -18,10 +18,10 @@
 
 #include "pyusbdux.h"
 
+#include <thread>	
 
 #define N_CHANS 16
 #define BUFSZ N_CHANS*sizeof(long int)
-
 
 comedi_t *dev = NULL;
 int range = 0;
@@ -39,9 +39,17 @@ unsigned int chanlist[N_CHANS];
 comedi_range* range_info[N_CHANS];
 lsampl_t maxdata[N_CHANS];
 comedi_cmd cmd;
+std::thread* thr = nullptr;
+bool running = false;
 
 static const char errorDevNotOpen[] = "Comedi device not open. Use open() first.";
 static const char errorDisconnect[] = "Device error. Possible disconnect.";
+
+Callback* callback = nullptr;
+
+void setCallback(Callback * cb) {
+	callback = cb;
+}
 
 void open(int comediDeviceNumber) {
 	char filename[256];
@@ -69,6 +77,55 @@ void open() {
 		}
 	}
 	throw "No USBDUX board found.";
+}
+
+
+int  getSampleFromBuffer(float sample[16]) {
+	if (dev == NULL) throw errorDevNotOpen;
+	while (!comedi_get_buffer_contents(dev,subdevice)) {
+		usleep(100);
+	};
+	int ret = read(comedi_fileno(dev),buffer,bytes_per_sample * n_chan);
+	if (ret == 0) {
+		return ret;
+	}
+	if (ret < 0) {
+		return ret;
+	} else if (ret > 0) {
+		int subdev_flags = comedi_get_subdevice_flags(dev,subdevice);
+		for(int i = 0; i < n_chan; i++) {
+			int raw;
+			if(subdev_flags & SDF_LSAMPL) {
+				raw = ((lsampl_t *)buffer)[i];
+			} else {
+				raw = ((sampl_t *)buffer)[i];
+			}
+			sample[i] = comedi_to_phys(raw,
+						    range_info[i],
+						    maxdata[i]);
+		}
+	}
+	return 1;
+}
+
+
+int hasSampleAvailable() {
+	if (dev == NULL) throw errorDevNotOpen;
+	int ret = comedi_get_buffer_contents(dev,subdevice);
+	if (ret < 0) throw errorDisconnect;
+	return ret > 0;
+}
+
+void readWorker() {
+	float sample[16];
+	running = true;
+	while (running) {
+		getSampleFromBuffer(sample);
+		printf("%f\n",sample[0]);
+		if (callback) {
+			callback->hasSample(sample);
+		}
+	}
 }
 
 
@@ -126,48 +183,12 @@ void start(int n_channels, double fs) {
 	if(ret < 0){
 		throw "Async data acquisition could not be started.";
 	}
+	thr = new std::thread(readWorker);
 }
 
 
 void start(int nChan) {
 	start(nChan,250);
-}
-
-
-sample_p getSampleFromBuffer() {
-	if (dev == NULL) throw errorDevNotOpen;
-	while (!comedi_get_buffer_contents(dev,subdevice)) {
-		usleep(100);
-	};
-	int ret = read(comedi_fileno(dev),buffer,bytes_per_sample * n_chan);
-	if (ret == 0) {
-		throw "BUG: No data returned by read() but there is data in the kernel buffer!";
-	}
-	if(ret < 0){
-		throw errorDisconnect;
-	} else if (ret > 0) {
-		int subdev_flags = comedi_get_subdevice_flags(dev,subdevice);
-		for(int i = 0; i < n_chan; i++) {
-			int raw;
-			if(subdev_flags & SDF_LSAMPL) {
-				raw = ((lsampl_t *)buffer)[i];
-			} else {
-				raw = ((sampl_t *)buffer)[i];
-			}
-			samples[i] = comedi_to_phys(raw,
-						    range_info[i],
-						    maxdata[i]);
-		}
-	}
-	return samples;
-}
-
-
-int hasSampleAvailable() {
-	if (dev == NULL) throw errorDevNotOpen;
-	int ret = comedi_get_buffer_contents(dev,subdevice);
-	if (ret < 0) throw errorDisconnect;
-	return ret > 0;
 }
 
 float getSamplingRate() {
@@ -190,6 +211,9 @@ float getSamplingRate() {
 void stop() {
 	if (dev == NULL) throw errorDevNotOpen;
 	comedi_cancel(dev,subdevice);
+	running = false;
+	thr->join();
+	thr = nullptr;
 	memset(&cmd,0,sizeof(comedi_cmd));
 }
 

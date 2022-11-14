@@ -1,4 +1,5 @@
-%module pyusbdux
+%module(directors="1") pyusbdux
+
 %include exception.i
 %{
 	#define SWIG_FILE_WITH_INIT
@@ -15,13 +16,6 @@
     }
 }
 
-%typemap(out) sample_p {
-  int i;
-  $result = PyList_New(16);
-  for (i = 0; i < 16; i++) {
-    PyObject *o = PyFloat_FromDouble((double) $1[i]);
-    PyList_SetItem($result,i,o);
-  }
-}
+%feature("director") Callback;
 
 %include "pyusbdux.h"

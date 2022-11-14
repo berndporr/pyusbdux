@@ -2,6 +2,14 @@
 
 import pyusbdux as dux
 
+class DataCallback(dux.Callback):
+
+    def hasSample(self,s):
+        print("s:",s)
+
+cb = DataCallback()
+dux.setCallback(cb)
+
 # open default USBDUX
 dux.open()
 
@@ -10,10 +18,6 @@ dux.open()
 # till the they are read via getSampleFromBuffer().
 dux.start(8)
 
-while True:
-    # Note that if called without checking if samples
-    # are actually available it will block until samples
-    # are available. For realtime tasks first check if
-    # samples are available.
-    sample = dux.getSampleFromBuffer()
-    print(sample)
+input()
+
+dux.stop()
