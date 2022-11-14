@@ -20,7 +20,6 @@
 
 #include <thread>	
 
-#define N_CHANS 16
 #define BUFSZ N_CHANS*sizeof(long int)
 
 comedi_t *dev = NULL;
@@ -44,12 +43,6 @@ bool running = false;
 
 static const char errorDevNotOpen[] = "Comedi device not open. Use open() first.";
 static const char errorDisconnect[] = "Device error. Possible disconnect.";
-
-Callback* callback = nullptr;
-
-void setCallback(Callback * cb) {
-	callback = cb;
-}
 
 void open(int comediDeviceNumber) {
 	char filename[256];
@@ -80,7 +73,7 @@ void open() {
 }
 
 
-int  getSampleFromBuffer(float sample[16]) {
+int  getSampleFromBuffer(float sample[N_CHANS]) {
 	if (dev == NULL) throw errorDevNotOpen;
 	while (!comedi_get_buffer_contents(dev,subdevice)) {
 		usleep(100);
@@ -116,20 +109,18 @@ int hasSampleAvailable() {
 	return ret > 0;
 }
 
-void readWorker() {
-	float sample[16];
+static void readWorker(Callback* cb) {
+	float sample[N_CHANS];
 	running = true;
 	while (running) {
 		getSampleFromBuffer(sample);
 		printf("%f\n",sample[0]);
-		if (callback) {
-			callback->hasSample(sample);
-		}
+		cb->hasSample(sample);
 	}
 }
 
 
-void start(int n_channels, double fs) {
+void start(Callback* cb, int n_channels, double fs) {
 	if (dev == NULL) throw errorDevNotOpen;
 
 	n_chan = n_channels;
@@ -183,12 +174,12 @@ void start(int n_channels, double fs) {
 	if(ret < 0){
 		throw "Async data acquisition could not be started.";
 	}
-	thr = new std::thread(readWorker);
+	thr = new std::thread(readWorker,cb);
 }
 
 
-void start(int nChan) {
-	start(nChan,250);
+void start(Callback* cb, int nChan) {
+	start(cb, nChan, 250);
 }
 
 float getSamplingRate() {

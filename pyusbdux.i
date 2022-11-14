@@ -1,5 +1,7 @@
 %module(directors="1") pyusbdux
 
+%feature("director") Callback;
+	
 %include exception.i
 %{
 	#define SWIG_FILE_WITH_INIT
@@ -15,7 +17,5 @@
 	return NULL;
     }
 }
-
-%feature("director") Callback;
 
 %include "pyusbdux.h"
