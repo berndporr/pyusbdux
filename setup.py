@@ -13,10 +13,10 @@ def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 pyusbdux_module = Extension('_pyusbdux',
-			     sources=['pyusbdux.i','pyusbdux.cpp'],
+			     sources=['pyusbdux.i'],
 			     extra_compile_args=['-std=c++11','-O3'],
 			     libraries=['comedi'],
-                             swig_opts=['-c++','-py3'],
+                             swig_opts=['-c++','-py3','-threads'],
 )
 
 						   
