@@ -31,15 +31,23 @@ import_array();
 #include <stdlib.h>
 #include <string.h>
 #include <thread>	
+#include <array>
 
 #define N_CHANS 16
 #define BUFSZ N_CHANS*sizeof(long int)
 %}
 
+%include "std_array.i"
+
+namespace std {
+  %template(FloatArray) array<float,N_CHANS>;
+  %template(DoubleArray) array<double,N_CHANS>;
+}
+
 %inline %{
 	class Callback{
 	public:
-	virtual void hasSample(float data[16]) = 0;
+	virtual void hasSample(const std::array<float,N_CHANS> &data) = 0;
 	virtual ~Callback() {};
 	Callback() {};
 };
@@ -137,10 +145,14 @@ int hasSampleAvailable() {
 }
 
 void readWorker(Callback* cb) {
-	float sample[N_CHANS];
+	std::array<float,N_CHANS> sample;
 	running = true;
 	while (running) {
-		getSampleFromBuffer(sample);
+		float tmp[N_CHANS];
+		getSampleFromBuffer(tmp);
+		for(int i = 0; i < N_CHANS; i++) {
+			sample[i] = tmp[i];
+		}
 		//printf("%f\n",sample[0]);
 		cb->hasSample(sample);
 	}
