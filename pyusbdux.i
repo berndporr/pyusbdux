@@ -143,12 +143,17 @@ void readWorker(Callback* cb) {
 	running = true;
 	while (running) {
 		float tmp[N_CHANS];
-		getSampleFromBuffer(tmp);
-		for(int i = 0; i < N_CHANS; i++) {
-			sample[i] = tmp[i];
+		int n = getSampleFromBuffer(tmp);
+		if (n > 0) {
+			for(int i = 0; i < N_CHANS; i++) {
+				sample[i] = tmp[i];
+			}
+			//printf("%f\n",sample[0]);
+			cb->hasSample(sample);
 		}
-		//printf("%f\n",sample[0]);
-		cb->hasSample(sample);
+		if (n < 0) {
+			throw errorDisconnect;
+		}
 	}
 }
 %}
@@ -235,9 +240,9 @@ float getSamplingRate() {
 
 void stop() {
 	if (dev == NULL) throw errorDevNotOpen;
-	comedi_cancel(dev,subdevice);
 	running = false;
 	thr->join();
+	comedi_cancel(dev,subdevice);
 	thr = nullptr;
 	memset(&cmd,0,sizeof(comedi_cmd));
 }
