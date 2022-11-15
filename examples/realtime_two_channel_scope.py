@@ -42,7 +42,7 @@ class QtPanningPlot:
 
 app = pg.mkQApp()
 mw = QtWidgets.QMainWindow()
-mw.setWindowTitle('100Hz dual PlotWidget')
+mw.setWindowTitle("{}Hz dual PlotWidget".format(samplingRate))
 mw.resize(800,800)
 cw = QtWidgets.QWidget()
 mw.setCentralWidget(cw)
@@ -52,10 +52,10 @@ layout = QtWidgets.QHBoxLayout()
 cw.setLayout(layout)
 
 # Let's create two instances of plot windows
-qtPanningPlot1 = QtPanningPlot("Arduino 1st channel")
+qtPanningPlot1 = QtPanningPlot("DUX 1st channel")
 layout.addWidget(qtPanningPlot1.getWidget())
 
-qtPanningPlot2 = QtPanningPlot("Arduino 2nd channel")
+qtPanningPlot2 = QtPanningPlot("DUX 2nd channel")
 layout.addWidget(qtPanningPlot2.getWidget())
 
 class DataCallback(c.Callback):
