@@ -21,10 +21,10 @@ pyusbdux_module = Extension('_pyusbdux',
 
 
 setup (name = 'pyusbdux',
-       version = '2.0.2',
+       version = '2.0.3',
        author      = "Bernd Porr",
        author_email = "mail@berndporr.me.uk",
-       url = "https://github.com/berndporr/pyusbdux",
+       url = "https://github.com/glasgowneuro/usbdux",
        description = 'API for the USB-DUX DAQ boxes for Linux (https://github.com/glasgowneuro/usbdux)',
        long_description=read('README.rst'),
        ext_modules = [pyusbdux_module],
