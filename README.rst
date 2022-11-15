@@ -31,27 +31,21 @@ Here are the basic steps how to use the API::
       # load the module
       import pyusbdux as dux
 
+      # create a callback interface
+      class DataCallback(dux.Callback):
+          def hasSample(self,sample): # sample arrived
+              print("s:",sample) # process sample
+
+      cb = DataCallback()
+
       # opens the 1st USBDUX device (autodetect)
       dux.open()
 
       # Start asynchronous data acquisition in the background: one channel, fs=250Hz
-      dux.start(1,250)
+      dux.start(cb,1,250)
 
-      # Now we read data at our convenience in a loop or timer or thread
-      # The following lines need to be repeated
-
-      # Let's check if samples are available
-      if (dux.hasSampleAvailable() == 0):
-      	    # nope! Do something else or nothing
-
-      # Let's get a sample (array of all USB-DUX channels)
-      sample = dux.getSampleFromBuffer()
-
-      # do something with the sample, for example print it
-      print(sample)
-
-      # rinse and repeat!
-      # end of loop
+      # do nothing or run a gui
+      input() # do nothing here
 
       # shutdown
       dux.stop()
@@ -69,16 +63,8 @@ and the analogue outputs, digital input and outputs synchronously::
       open()                      # opens 1st USB-DUX device (autodetect)
 
       # Starts acquisition of n_channels at the sampling rate of fs.
-      start(n_channels, fs)
-      start(n_channels)           # at fs=250
-
-      # Checks if samples are available (=1) or zero if not.
-      hasSampleAvailable();
-
-      # Returns one sample from all channels.
-      # returns always 16 values irrespective of how many channels
-      # are measured. Blocking call if no samples are available.
-      getSampleFromBuffer()
+      start(Callback,n_channels, fs)
+      start(Callback,n_channels)           # at fs=250
 
       # gets the actual sampling rate of the running acquisition
       getSamplingRate()
