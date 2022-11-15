@@ -62,7 +62,13 @@ and the analogue outputs, digital input and outputs synchronously::
       open(comediDeviceNumber)
       open()                      # opens 1st USB-DUX device (autodetect)
 
+      # Callback interface
+      class DataCallback(dux.Callback):
+          def hasSample(self,sample): # sample arrived
+              # implement your callback handler here
+
       # Starts acquisition of n_channels at the sampling rate of fs.
+      # Expects an instance of Callback with overloaded hasSample(self,sample).
       start(Callback,n_channels, fs)
       start(Callback,n_channels)           # at fs=250
 
