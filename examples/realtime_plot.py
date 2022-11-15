@@ -46,14 +46,6 @@ class RealtimePlotWindow:
 # To plot more channels just create more instances and add callback handlers below
 realtimePlotWindow = RealtimePlotWindow()
 
-# called for every new sample which has arrived from the Arduino
-def callBack(data):
-    # send the sample to the plotwindow
-    # add any filtering here:
-    # data = self.myfilter.dofilter(data)
-    realtimePlotWindow.addData(data[0])
-
-
 class DataCallback(c.Callback):
     def hasSample(self,s):
         realtimePlotWindow.addData(s[0])
