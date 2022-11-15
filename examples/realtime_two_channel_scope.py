@@ -20,7 +20,7 @@ class QtPanningPlot:
 
     def __init__(self,title):
         self.pw = pg.PlotWidget()
-        self.pw.setYRange(-1,1)
+        self.pw.setYRange(-1.5,1.5)
         self.pw.setXRange(0,500/samplingRate)
         self.plt = self.pw.plot()
         self.data = []
@@ -43,7 +43,7 @@ class QtPanningPlot:
 app = pg.mkQApp()
 mw = QtWidgets.QMainWindow()
 mw.setWindowTitle("{}Hz dual PlotWidget".format(samplingRate))
-mw.resize(800,800)
+mw.resize(800,400)
 cw = QtWidgets.QWidget()
 mw.setCentralWidget(cw)
 
