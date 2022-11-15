@@ -1,4 +1,3 @@
 include *.py
 include README.rst
-include pyusbdux.h
-include pyusbdux.cpp
+include pyusbdux.i
