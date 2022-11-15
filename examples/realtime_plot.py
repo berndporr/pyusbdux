@@ -5,54 +5,67 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import pyusbdux as c
 
-# add any initialsiation code here or filter initialisation
 
-# receives the data from the generator below
-def update(data):
-    global plotbuffer
-    plotbuffer=np.append(plotbuffer,data)
-    # only keep the 500 newest ones and discard the old ones
-    plotbuffer=plotbuffer[-500:]
-    # set the new 500 points of channel 9
-    line.set_ydata(plotbuffer)
-    return line,
+# Creates a scrolling data display
+class RealtimePlotWindow:
 
-# retrieves the data from the ringbuffer as quickly
-# as possible and then dispatches the data as a numpy
-# array. This is called from the animation function
-# within an endless loop.
-def data_gen():
-    #endless loop which gets data
-    # filter = MyAmazingFilter(...)
-    while True:
-        data = np.zeros(0)
-        while c.hasSampleAvailable():
-            sample = c.getSampleFromBuffer()
-            data = np.append(data,sample[0])
-            # for filtering add here:
-            # data = filter.dofilter(data)
-        yield data
+    def __init__(self):
+        # create a plot window
+        self.fig, self.ax = plt.subplots()
+        # that's our plotbuffer
+        self.plotbuffer = np.zeros(500)
+        # create an empty line
+        self.line, = self.ax.plot(self.plotbuffer)
+        # axis
+        self.ax.set_ylim(0, 1.5)
+        # That's our ringbuffer which accumluates the samples
+        # It's emptied every time when the plot window below
+        # does a repaint
+        self.ringbuffer = []
+        # add any initialisation code here (filters etc)
+        # start the animation
+        self.ani = animation.FuncAnimation(self.fig, self.update, interval=100)
+
+    # updates the plot
+    def update(self, data):
+        # add new data to the buffer
+        self.plotbuffer = np.append(self.plotbuffer, self.ringbuffer)
+        # only keep the 500 newest ones and discard the old ones
+        self.plotbuffer = self.plotbuffer[-500:]
+        self.ringbuffer = []
+        # set the new 500 points of channel 9
+        self.line.set_ydata(self.plotbuffer)
+        return self.line,
+
+    # appends data to the ringbuffer
+    def addData(self, v):
+        self.ringbuffer.append(v)
 
 
+# Create an instance of an animated scrolling window
+# To plot more channels just create more instances and add callback handlers below
+realtimePlotWindow = RealtimePlotWindow()
+
+# called for every new sample which has arrived from the Arduino
+def callBack(data):
+    # send the sample to the plotwindow
+    # add any filtering here:
+    # data = self.myfilter.dofilter(data)
+    realtimePlotWindow.addData(data[0])
+
+
+class DataCallback(c.Callback):
+    def hasSample(self,s):
+        realtimePlotWindow.addData(s[0])
+
+
+cb = DataCallback()
 c.open()
 print("ADC board:",c.get_board_name())
-c.start(8,250)
-# print("Actual samplingrate =",c.getSamplingRate(),"Hz")
+c.start(cb,8,250)
+print("Actual samplingrate =",c.getSamplingRate(),"Hz")
 
-# now let's plot the data
-fig, ax = plt.subplots()
-# that's our plotbuffer
-plotbuffer = np.zeros(500)
-# plots an empty line
-line, = ax.plot(plotbuffer)
-# axis
-ax.set_ylim(-1.5, 1.5)
-
-
-# start the animation
-ani = animation.FuncAnimation(fig, update, data_gen, interval=100)
-
-# show it
+# starts the animation
 plt.show()
 
 c.stop()

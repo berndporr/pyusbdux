@@ -8,12 +8,6 @@
 	
 %include exception.i
 
-%include "numpy.i"
-
-%init %{
-import_array();
-%}
-
 %exception {
     try {
         $action
