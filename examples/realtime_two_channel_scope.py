@@ -13,6 +13,7 @@ import pyqtgraph as pg
 from pyqtgraph.Qt import QtCore, QtWidgets
 import numpy as np
 import pyusbdux as c
+from threading import Thread, Lock
 
 samplingRate = 250
 
@@ -28,17 +29,22 @@ class QtPanningPlot:
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.update)
         self.timer.start(100)
+        self.mutex = Lock()
 
     def getWidget(self):
         return self.pw
         
     def update(self):
+        self.mutex.acquire()
         self.data=self.data[-500:]
         if self.data:
             self.plt.setData(x=np.linspace(0,len(self.data)/samplingRate,len(self.data)),y=self.data)
+        self.mutex.release()
 
     def addData(self,d):
+        self.mutex.acquire()
         self.data.append(d)
+        self.mutex.release()
 
 app = pg.mkQApp()
 mw = QtWidgets.QMainWindow()
@@ -47,21 +53,29 @@ mw.resize(800,400)
 cw = QtWidgets.QWidget()
 mw.setCentralWidget(cw)
 
+vlayout = QtWidgets.QVBoxLayout()
+cw.setLayout(vlayout)
+
 # Let's arrange the two plots horizontally
-layout = QtWidgets.QHBoxLayout()
-cw.setLayout(layout)
+hlayout = QtWidgets.QHBoxLayout()
 
 # Let's create two instances of plot windows
 qtPanningPlot1 = QtPanningPlot("DUX 1st channel")
-layout.addWidget(qtPanningPlot1.getWidget())
+hlayout.addWidget(qtPanningPlot1.getWidget())
 
 qtPanningPlot2 = QtPanningPlot("DUX 2nd channel")
-layout.addWidget(qtPanningPlot2.getWidget())
+hlayout.addWidget(qtPanningPlot2.getWidget())
+
+vlayout.addLayout(hlayout)
+l = QtWidgets.QLabel("Hello")
+vlayout.addWidget(l)
 
 class DataCallback(c.Callback):
     def hasSample(self,s):
         qtPanningPlot1.addData(s[0])
         qtPanningPlot2.addData(s[1])
+        f = s[0]
+        l.setText("Channel 1: "+str(f))
 
 cb = DataCallback()
 c.open()
