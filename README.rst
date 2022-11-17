@@ -20,6 +20,9 @@ Then install `pyusbdux` by typing::
   
       pip3 install pyusbdux [--user] [--upgrade]
 
+or
+
+      ./setup install [--user]
 
 
 Quick start guide
