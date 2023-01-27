@@ -27,7 +27,7 @@ pyusbdux_module = Extension('_pyusbdux',
 
 
 setup (name = 'pyusbdux',
-       version = '2.0.4',
+       version = '2.1.0',
        author      = "Bernd Porr",
        author_email = "mail@berndporr.me.uk",
        url = "https://github.com/glasgowneuro/usbdux",

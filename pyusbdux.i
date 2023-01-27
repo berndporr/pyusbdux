@@ -26,6 +26,7 @@
 #include <string.h>
 #include <thread>	
 #include <array>
+#include <fcntl.h>
 
 #define N_CHANS 16
 #define BUFSZ N_CHANS*sizeof(long int)
@@ -104,10 +105,15 @@ void open() {
 %{
 int  getSampleFromBuffer(float sample[N_CHANS]) {
 	if (dev == NULL) throw errorDevNotOpen;
-	while (!comedi_get_buffer_contents(dev,subdevice)) {
-		usleep(100);
-	};
-	int ret = read(comedi_fileno(dev),buffer,bytes_per_sample * n_chan);
+	fd_set rdset;
+	FD_ZERO(&rdset);
+	FD_SET(comedi_fileno(dev),&rdset);
+	struct timeval timeout;
+	timeout.tv_sec = 0;
+	timeout.tv_usec = 500000;
+	int ret = select(comedi_fileno(dev)+1,&rdset,NULL,NULL,&timeout);
+	if (ret < 0) return ret;
+	ret = read(comedi_fileno(dev),buffer,bytes_per_sample * n_chan);
 	if (ret == 0) {
 		return ret;
 	}
